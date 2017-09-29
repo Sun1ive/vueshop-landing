@@ -1,6 +1,6 @@
 <template>
   <v-app light>
-    <v-toolbar fixed>
+    <v-toolbar fixed class="light-blue lighten-3">
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn flat class="px-2">BUTTON</v-btn>
@@ -19,8 +19,8 @@
             <v-card-media :src="item.thumb" height="500"></v-card-media>
             <v-card-title primary-title>
               <div>
-                <h4>{{ item.title }}</h4>
-                <p>Цена: {{ item.price }} грн</p>
+                <h5>{{ item.title }}</h5>
+                <p class="text-xs-center">Цена: {{ item.price }} грн</p>
               </div>
             </v-card-title>
             <v-card-actions>
@@ -40,7 +40,7 @@
                   Товар: {{ item.title }} <br>
                   Цена: {{ item.price }}
                 </div>
-                <v-btn class="ml-0" @click.stop="clear()">Удалить товар</v-btn>
+                <v-btn class="ml-0" @click.stop="clear">Удалить товар</v-btn>
               </v-card-text>
             </v-card>
             <v-card-actions>
@@ -154,5 +154,8 @@ import axios from 'axios'
 }
 .dialog .dialog--active{
   min-width: 400px;
+}
+.card__title {
+  justify-content: center;
 }
 </style>
