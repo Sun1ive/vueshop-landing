@@ -43,6 +43,9 @@
                 <v-btn class="ml-0" @click.stop="clear">Удалить товар</v-btn>
               </v-card-text>
             </v-card>
+            <v-card-text class="text-xs-center bgc">
+              Сумма: {{ summ }}
+            </v-card-text>
             <v-card-actions>
               <v-btn @click.stop="makeOrder"><v-icon left>done</v-icon>Заказать</v-btn><v-btn @click.stop="showCart = false"><v-icon left>clear</v-icon>Закрыть</v-btn>
             </v-card-actions>
@@ -53,9 +56,9 @@
     <v-container>
       <v-dialog v-model="isVisibleForm" id="dialog" width="450">
         <v-form class="py-2 px-5 form" @submit.prevent="submitOrder">
-          <v-text-field v-model="name" label="Имя" name="name"></v-text-field>
-          <v-text-field v-model="phone" label="Телефон" name="name"></v-text-field>
-          <v-text-field v-model="email" label="Email" name="name"></v-text-field>
+          <v-text-field required type="text" v-model="finalOrder.name" label="Имя" name="name"></v-text-field>
+          <v-text-field required type="text" v-model="finalOrder.phone" label="Телефон" name="name"></v-text-field>
+          <v-text-field required type="email" v-model="finalOrder.email" label="Email" name="name"></v-text-field>
           <v-btn class="ml-0" type="submit">Заказать</v-btn>
           <v-btn @click="isVisibleForm = false">Закрыть</v-btn>
         </v-form>
@@ -66,6 +69,7 @@
 
 <script>
 import axios from 'axios'
+import _ from 'lodash'
 
   export default {
     data () {
@@ -78,9 +82,12 @@ import axios from 'axios'
         cart: [],
         showCart: false,
         isVisibleForm: false,
-        name: '',
-        phone: '',
-        email: '',
+        finalOrder: {
+          name: '',
+          phone: null,
+          email: '',
+          items: []
+        },
         check: false
       }
     },
@@ -116,26 +123,24 @@ import axios from 'axios'
         this.isVisibleForm = true
       },
       submitOrder () {
-        let finalOrder = {
-          name: '',
-          phone: '',
-          email: '',
-          items: []
-        }
-        finalOrder.name = this.name
-        finalOrder.phone = this.phone
-        finalOrder.email = this.email
-        finalOrder.items = this.cart
-
-        console.log(finalOrder)
-        axios.post('https://myvuewebapp.firebaseio.com/order.json', finalOrder)
+        this.finalOrder.items = this.cart
+        axios.post('https://myvuewebapp.firebaseio.com/order.json', this.finalOrder)
           .then(r => console.log(r))
           .catch(e => console.log(e))
+        alert('Спасибо за заказ!')
+        this.isVisibleForm = false
       }
     },
     computed: {
       checkLength () {
         return this.cart.length
+      },
+      summ () {
+        let summ = 0
+        _.each(this.cart, item => {
+          summ += item.price
+        })
+        return summ
       }
     }
   }
@@ -157,5 +162,8 @@ import axios from 'axios'
 }
 .card__title {
   justify-content: center;
+}
+.bgc {
+  background-color: #fff;
 }
 </style>
